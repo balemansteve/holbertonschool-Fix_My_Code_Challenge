@@ -11,43 +11,38 @@
  */
 int delete_dnodeint_at_index(dlistint_t **head, unsigned int index)
 {
-	dlistint_t *saved_head;
-	dlistint_t *tmp;
-	unsigned int p;
+    dlistint_t *current = *head;
+    dlistint_t *temp = NULL;
+    unsigned int i = 0;
 
-	if (*head == NULL)
-	{
-		return (-1);
-	}
-	saved_head = *head;
-	p = 0;
-	while (p < index && *head != NULL)
-	{
-		*head = (*head)->next;
-		p++;
-	}
-	if (p != index)
-	{
-		*head = saved_head;
-		return (-1);
-	}
-	if (0 == index)
-	{
-		tmp = (*head)->next;
-		free(*head);
-		*head = tmp;
-		if (tmp != NULL)
-		{
-			tmp->prev = NULL;
-		}
-	}
-	else
-	{
-		(*head)->prev->prev = (*head)->prev;
-		free(*head);
-		if ((*head)->next)
-			(*head)->next->prev = (*head)->prev;
-		*head = saved_head;
-	}
-	return (1);
+    if (*head == NULL)
+        return (-1);
+
+    /* Traverse to the node at index */
+    while (current != NULL && i < index)
+    {
+        current = current->next;
+        i++;
+    }
+
+    /* If index is out of bounds */
+    if (current == NULL)
+        return (-1);
+
+    /* Handle deletion of head node */
+    if (current == *head)
+    {
+        *head = current->next;
+        if (*head != NULL)
+            (*head)->prev = NULL;
+    }
+    else
+    {
+        current->prev->next = current->next;
+        if (current->next != NULL)
+            current->next->prev = current->prev;
+    }
+
+    free(current);
+    return (1);
 }
